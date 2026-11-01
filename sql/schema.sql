@@ -66,3 +66,21 @@ CREATE TABLE fact_paros (
     tiempo_paro_minutos NUMERIC(6,2) NOT NULL CHECK (tiempo_paro_minutos >= 0),
     observacion TEXT NULL
 );
+
+
+
+-- 3. optimizacion de consultas (indices)
+
+-- indices en foreign keys para acelerar los agrupamientos (group BY) y JOINs
+-- desde power BI, Grafana y consultas SQL analiticas
+
+--optimizacion para consultas de produccion 
+CREATE INDEX idx_fact_prod_tiempo ON fact_produccion_hora(fecha_key);
+CREATE INDEX idx_fact_paros_maquina ON fact_produccion_hora(maquina_key);
+CREATE INDEX idx_fact prod_producto ON fect_produccion_hora(producto_key);
+
+--optimizacion para consultas de analisis de paros y tiempos perdidos
+CREATE INDEX idx_fact_paros_tiempo ON fact_paros(fecha_key);
+CREATE INDEX idx_fact_paros_maquina ON fact_paros(maquina_key);
+CREATE INDEX idx_fact_paros_codigo ON fact_paros(codigo_paro_key);
+
