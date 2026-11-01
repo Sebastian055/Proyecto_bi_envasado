@@ -1,4 +1,6 @@
--- 1.1: dimension de tiempo
+-- 1. Creacion de tablas de dimensiones
+
+-- 1.1 dimension de tiempo
 CREATE TABLE dim_tiempo (
     fecha_key INT PRIMARY KEY,
     fecha DATE NOT NULL,
@@ -6,8 +8,8 @@ CREATE TABLE dim_tiempo (
     mes INT NOT NULL,
     nombre_mes VARCHAR(15) NOT NULL,
     dia INT NOT NULL,
-    turno INT NOT NULL CHECK (turno IN (1, 2, 3)), -- turnos laborales (1-mañana, 2-tarde, 3-noche)
-    hora INT NOT NULL CHECK (hora BETWEEN 0 AND 23) -- Hora militar del día (0 a 23)
+    turno INT NOT NULL CHECK (turno IN (1, 2, 3)),
+    hora INT NOT NULL CHECK (hora BETWEEN 0 AND 23)
 );
 
 -- 1.2 dimension de maquinas
@@ -20,11 +22,11 @@ CREATE TABLE dim_maquina (
 -- 1.3 dimension operario
 CREATE TABLE dim_operario (
     operario_key SERIAL PRIMARY KEY,
-    codigo_primario VARCHAR(20) NOT NULL,
+    codigo_operario VARCHAR(20) NOT NULL,
     nombre_operario VARCHAR(100) NOT NULL,
     fecha_inicio DATE NOT NULL,
     fecha_fin DATE NULL,
-    activo BOOLEAN NOT NULL
+    activo BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 -- 1.4 dimension producto
@@ -44,9 +46,12 @@ CREATE TABLE dim_codigo_paro (
     descripcion_subcodigo VARCHAR(150) NULL
 );
 
--- 2.1 hecho de produccion hora a hora
+
+-- 2. creacion de tablas de hechos
+
+-- 2.1 hecho de produccion hora a hora 
 CREATE TABLE fact_produccion_hora (
-    fecha_prod_id SERIAL PRIMARY KEY,
+    fact_prod_id SERIAL PRIMARY KEY,
     fecha_key INT NOT NULL REFERENCES dim_tiempo(fecha_key),
     maquina_key INT NOT NULL REFERENCES dim_maquina(maquina_key),
     operario_key INT NOT NULL REFERENCES dim_operario(operario_key),
@@ -68,7 +73,6 @@ CREATE TABLE fact_paros (
 );
 
 
-
 -- 3. optimizacion de consultas (indices)
 
 -- indices en foreign keys para acelerar los agrupamientos (group BY) y JOINs
@@ -76,11 +80,17 @@ CREATE TABLE fact_paros (
 
 --optimizacion para consultas de produccion 
 CREATE INDEX idx_fact_prod_tiempo ON fact_produccion_hora(fecha_key);
-CREATE INDEX idx_fact_paros_maquina ON fact_produccion_hora(maquina_key);
-CREATE INDEX idx_fact prod_producto ON fect_produccion_hora(producto_key);
+CREATE INDEX idx_fact_prod_maquina ON fact_produccion_hora(maquina_key);
+CREATE INDEX idx_fact_prod_producto ON fact_produccion_hora(producto_key);
 
 --optimizacion para consultas de analisis de paros y tiempos perdidos
 CREATE INDEX idx_fact_paros_tiempo ON fact_paros(fecha_key);
 CREATE INDEX idx_fact_paros_maquina ON fact_paros(maquina_key);
 CREATE INDEX idx_fact_paros_codigo ON fact_paros(codigo_paro_key);
+
+
+
+
+
+
 
