@@ -8,11 +8,11 @@ from sqlalchemy import create_engine, text
 # Cargar variables del entorno (.env)
 load_dotenv()
 
-DB_USER = os.getenv("PGUSER", os.getenv("DB_USER", "postgres"))
-DB_PASS = os.getenv("PGPASSWORD", os.getenv("DB_PASS", "tu_contraseña_aqui"))
-DB_HOST = os.getenv("PGHOST", os.getenv("DB_HOST", "localhost"))
-DB_PORT = os.getenv("PGPORT", os.getenv("DB_PORT", "5432"))
-DB_NAME = os.getenv("PGDATABASE", os.getenv("DB_NAME", "bi_envasado"))
+DB_USER = os.getenv("PGUSER", os.getenv("DB_USER"))
+DB_PASS = os.getenv("PGPASSWORD", os.getenv("DB_PASS"))
+DB_HOST = os.getenv("PGHOST", os.getenv("DB_HOST"))
+DB_PORT = os.getenv("PGPORT", os.getenv("DB_PORT"))
+DB_NAME = os.getenv("PGDATABASE", os.getenv("DB_NAME"))
 
 DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 engine = create_engine(DATABASE_URL)
